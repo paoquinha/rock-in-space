@@ -1,0 +1,40 @@
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: leaderboard
+// Document ID: auto-generated
+// Fields:
+//   - name: string (required, 1-15 chars) - Player name
+//   - score: number (required, positive) - Player score
+//   - date: string (required) - Formatted date
+//   - timestamp: number (required) - Server timestamp for sorting
+//
+// ===============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    function isValidLeaderboardEntry(data) {
+      return data.keys().hasAll(['name', 'score', 'date', 'timestamp']) &&
+             data.keys().hasOnly(['name', 'score', 'date', 'timestamp']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 15 &&
+             data.score is number && data.score >= 0 &&
+             data.date is string &&
+             data.timestamp is number;
+    }
+
+    match /leaderboard/{entryId} {
+      // Anyone can read the leaderboard
+      allow read: if true;
+      
+      // Anyone can create an entry, but it must be valid
+      allow create: if isValidLeaderboardEntry(request.resource.data);
+      
+      // No updates or deletes allowed for leaderboard entries to prevent tampering
+      allow update, delete: if false;
+    }
+  }
+}

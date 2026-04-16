@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "A global high score entry",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Player name" },
+        "score": { "type": "number", "description": "Player score" },
+        "date": { "type": "string", "description": "Date of the record in ISO format" },
+        "timestamp": { "type": "number", "description": "Server timestamp for sorting" }
+      },
+      "required": ["name", "score", "date", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/leaderboard/{entryId}": {
+      "schema": "LeaderboardEntry",
+      "description": "Global leaderboard entries"
+    }
+  }
+}
